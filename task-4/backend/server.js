@@ -1,8 +1,10 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import morgan from 'morgan';
 import connectDB from './config/db.js';
+
+import productRoutes from './router/productRouter.js';
 import userRoutes from './router/userRouter.js';
-import product from './data/productData.js';
 
 dotenv.config();
 
@@ -10,18 +12,17 @@ connectDB();
 
 const app = express();
 
+if (process.env.NODE_ENV === 'development') {
+	app.use(morgan('dev'));
+}
+
 app.use(express.json());
 
-// app.use('/api/products', productRoutes);
+app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
-// app.use('/api/orders', orderRoutes);
 
 app.get('/', (req, res) => {
 	res.send('API is running....');
-});
-
-app.get('/api/products', (req, res) => {
-	res.json(product);
 });
 
 const PORT = process.env.PORT || 5000;
